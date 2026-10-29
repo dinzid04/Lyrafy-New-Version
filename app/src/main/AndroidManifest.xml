@@ -48,7 +48,7 @@
         android:name=".App"
         android:allowBackup="true"
         android:appCategory="audio"
-        android:banner="@mipmap/tv_banner"
+        android:banner="@drawable/ic_lyra_logo"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
