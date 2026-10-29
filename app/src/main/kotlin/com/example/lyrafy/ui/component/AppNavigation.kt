@@ -728,7 +728,7 @@ private fun DetachedSearchCircleButton(
     glassState: GlassState,
     frostedSurfaceColor: Color,
     pureBlack: Boolean,
-    accentWash: Color,
+    accentWash: (() -> Color)?,
     borderBrush: Brush,
     onClick: () -> Unit,
     onDoubleTap: (() -> Unit)?,
