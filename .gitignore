@@ -1,0 +1,84 @@
+# Built application & library files
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+*.dm
+*.class
+bin/
+gen/
+out/
+app/release
+app/universal*/
+app/arm64*/
+app/armeabi*/
+app/x86*/
+
+# Gradle files & caches
+.gradle/
+.gradle-home/
+.gradle-codex/
+build/
+local.properties
+
+# IDE & Editor files
+.idea/
+*.iml
+.navigation/
+captures/
+.vscode/
+.DS_Store
+
+# Tool & AI Caches
+.claude/
+CLAUDE.md
+.kotlin/
+assetscon/
+apk-generated/
+.build_number
+
+# Notes & plans
+plan.md
+implementation_plan.md
+transcript_*.txt
+docs/
+
+# Logs, crash dumps & API response dumps
+*.log
+logcat*.txt
+*_log.txt
+*_logs.txt
+crash*.txt
+app/*.json
+
+# Keystores
+app/persistent-debug.keystore
+
+# Native & C++ build outputs
+.externalNativeBuild
+.cxx/
+*.so
+*.bin
+
+# Scratch files in the repo root (not part of the build)
+/test_*
+/Test*.kt
+/fix_*
+/get_*.py
+/*.svg
+/app_src_*
+/NEW-UI/
+/old-player/
+/jadx/
+/jadx.zip
+/lyra-recode/
+.agents/skills/lyra-recode/references/*.mp4
+
+# Misc
+*.py
+!scripts/*.py
+.env
+output-metadata.json
+vcs.xml
+lint/
