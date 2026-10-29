@@ -567,14 +567,30 @@ private fun HomeShell() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_lyra_logo),
-                contentDescription = "Lyra",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .launchMarkTarget()
-                    .size(HomeMarkWidth, HomeMarkHeight)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_lyra_logo),
+                    contentDescription = "Lyra",
+                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .launchMarkTarget()
+                        .size(HomeMarkWidth, HomeMarkHeight)
+                )
+                Text(
+                    text = "Lyra",
+                    style = TextStyle(
+                        fontFamily = InterFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 26.sp,
+                        letterSpacing = (-0.04).em,
+                    ),
+                    color = Color.White,
+                    maxLines = 1
+                )
+            }
             Box(
                 modifier = Modifier
                     .launchRise(order = 0, distance = HomeTopBarRise)
@@ -1703,28 +1719,44 @@ fun HomeScreen(
                         label = "topBarProgress"
                     )
 
-                    // the brand mark over the hero, swapped for a bold "Home" once the hero scrolls away.
+                    // the brand mark over the hero, swapped for a bold "Lyra" once the hero scrolls away.
                     // it's also where the launch intro lands the splash mark
                     Box(contentAlignment = Alignment.CenterStart) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_lyra_logo),
-                            contentDescription = "Lyra",
-                            tint = Color.Unspecified,
-                            modifier = Modifier
-                                .launchMarkTarget()
-                                .size(HomeMarkWidth, HomeMarkHeight)
-                                .graphicsLayer {
-                                    alpha = 1f - topBarProgress
-                                    val scale = 1f - topBarProgress * 0.25f
-                                    scaleX = scale
-                                    scaleY = scale
-                                    transformOrigin = TransformOrigin(0f, 0.5f)
-                                    renderEffect = BlurEffectCache.get(topBarProgress * 15f)
-                                }
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.graphicsLayer {
+                                alpha = 1f - topBarProgress
+                                val scale = 1f - topBarProgress * 0.25f
+                                scaleX = scale
+                                scaleY = scale
+                                transformOrigin = TransformOrigin(0f, 0.5f)
+                                renderEffect = BlurEffectCache.get(topBarProgress * 15f)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_lyra_logo),
+                                contentDescription = "Lyra",
+                                tint = Color.Unspecified,
+                                modifier = Modifier
+                                    .launchMarkTarget()
+                                    .size(HomeMarkWidth, HomeMarkHeight)
+                            )
+                            Text(
+                                text = "Lyra",
+                                style = TextStyle(
+                                    fontFamily = InterFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 26.sp,
+                                    letterSpacing = (-0.04).em,
+                                ),
+                                color = Color.White,
+                                maxLines = 1
+                            )
+                        }
 
                         Text(
-                            text = "Home",
+                            text = "Lyra",
                             style = TextStyle(
                                 fontFamily = InterFontFamily,
                                 fontWeight = FontWeight.Bold,

@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.lyrafy.BuildConfig
 import com.example.lyrafy.R
-import com.example.lyrafy.ui.component.PinnedBottomScaffold
 import com.example.lyrafy.ui.component.PopupSheetState
 import com.example.lyrafy.ui.component.pressBounce
 import com.example.lyrafy.ui.screens.donate.showDonateSheet
@@ -73,10 +72,19 @@ private const val DeveloperEmailUrl = "mailto:gadingkencana05@gmail.com"
 
 /** Opens the Developer & About LYRA sheet in the zoom-out popup host. */
 fun PopupSheetState.showAboutSheet() {
-    show {
+    show(
+        fullBleed = true,
+        surface = SheetBg,
+        buttonBar = {
+            SheetPrimaryButton(
+                text = "Support development",
+                leadingIcon = R.drawable.favorite,
+                onClick = { showDonateSheet() },
+            )
+        },
+    ) {
         AboutSheetContent(
             onBack = ::dismiss,
-            onDonate = { showDonateSheet() },
         )
     }
 }
@@ -84,123 +92,106 @@ fun PopupSheetState.showAboutSheet() {
 @Composable
 private fun AboutSheetContent(
     onBack: () -> Unit,
-    onDonate: () -> Unit,
 ) {
     val context = LocalContext.current
     val installed = remember { shortVersion(BuildConfig.VERSION_NAME) }
     val scrollState = rememberScrollState()
 
-    PinnedBottomScaffold(
-        scrimColor = SheetBg,
-        bottomBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 10.dp, bottom = 20.dp),
-            ) {
-                SheetPrimaryButton(
-                    text = "Support development",
-                    leadingIcon = R.drawable.favorite,
-                    onClick = onDonate,
-                )
-            }
-        },
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(scrollState),
     ) {
+        // 1. Top Section (Back button, "Developer" title, subtitle)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(scrollState),
+                .padding(horizontal = 20.dp, vertical = 12.dp),
         ) {
-            // 1. Top Section (Back button, "Developer" title, subtitle)
-            Column(
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF1A1B20))
+                    .border(1.dp, Color(0xFF2A2C34), CircleShape)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onBack,
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_back),
+                    contentDescription = "Back",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            Text(
+                text = "Developer",
+                style = TextStyle(
+                    fontFamily = InterFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp,
+                    letterSpacing = (-0.6).sp,
+                    color = Color.White,
+                ),
+            )
+
+            Spacer(Modifier.height(6.dp))
+
+            Text(
+                text = "Di balik LYRA, ada satu orang yang percaya bahwa musik bisa membuat hidup lebih bermakna.",
+                style = TextStyle(
+                    fontFamily = InterFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 13.sp,
+                    lineHeight = 18.sp,
+                    color = SubtitleGray,
+                ),
+            )
+        }
+
+        // 2. Banner & Overlapping Circular Avatar
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            AsyncImage(
+                model = DevBannerFallbackUrl,
+                placeholder = painterResource(R.drawable.ic_lyra_logo),
+                error = painterResource(R.drawable.ic_lyra_logo),
+                contentDescription = "Developer Banner",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF1A1B20))
-                        .border(1.dp, Color(0xFF2A2C34), CircleShape)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = onBack,
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_back),
-                        contentDescription = "Back",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
+                    .height(160.dp)
+                    .background(Color(0xFF14151A)),
+            )
 
-                Spacer(Modifier.height(16.dp))
-
-                Text(
-                    text = "Developer",
-                    style = TextStyle(
-                        fontFamily = InterFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp,
-                        letterSpacing = (-0.6).sp,
-                        color = Color.White,
-                    ),
-                )
-
-                Spacer(Modifier.height(6.dp))
-
-                Text(
-                    text = "Di balik LYRA, ada satu orang yang percaya bahwa musik bisa membuat hidup lebih bermakna.",
-                    style = TextStyle(
-                        fontFamily = InterFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 13.sp,
-                        lineHeight = 18.sp,
-                        color = SubtitleGray,
-                    ),
-                )
-            }
-
-            // 2. Banner & Overlapping Circular Avatar
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 20.dp)
+                    .offset(y = 42.dp)
+                    .size(84.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF1A1B20))
+                    .border(2.dp, Color.White, CircleShape),
             ) {
                 AsyncImage(
-                    model = R.drawable.dev_dinz_banner,
-                    placeholder = painterResource(R.drawable.dev_dinz_banner),
-                    error = coil3.compose.rememberAsyncImagePainter(DevBannerFallbackUrl),
-                    contentDescription = "Developer Banner",
+                    model = DevAvatarFallbackUrl,
+                    placeholder = painterResource(R.drawable.ic_lyra_logo),
+                    error = painterResource(R.drawable.ic_lyra_logo),
+                    contentDescription = "Dinz Avatar",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp),
+                    modifier = Modifier.fillMaxSize(),
                 )
-
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 20.dp)
-                        .offset(y = 42.dp)
-                        .size(84.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF1A1B20))
-                        .border(2.dp, Color.White, CircleShape),
-                ) {
-                    AsyncImage(
-                        model = R.drawable.dev_dinz_profile,
-                        placeholder = painterResource(R.drawable.dev_dinz_profile),
-                        error = coil3.compose.rememberAsyncImagePainter(DevAvatarFallbackUrl),
-                        contentDescription = "Dinz Avatar",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
             }
+        }
 
             // Space for the 42.dp avatar overhang + 12.dp spacing
             Spacer(Modifier.height(54.dp))
@@ -534,7 +525,6 @@ private fun AboutSheetContent(
                 Spacer(Modifier.height(16.dp))
             }
         }
-    }
 }
 
 @Composable

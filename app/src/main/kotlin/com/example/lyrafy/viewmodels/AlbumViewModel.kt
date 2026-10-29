@@ -29,7 +29,7 @@ constructor(
     private val database: MusicDatabase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val albumId = savedStateHandle.get<String>("albumId")!!
+    val albumId = savedStateHandle.get<String>("albumId").orEmpty()
     val playlistId = MutableStateFlow("")
     val albumWithSongs =
         database
@@ -56,7 +56,11 @@ constructor(
     }
 
     private fun load() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (albumId.isBlank()) {
+                loadFailed.value = true
+                return@launch
+            }
             val album = database.album(albumId).first()
             if (album?.description != null) {
                 description.value = album.description

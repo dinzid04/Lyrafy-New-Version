@@ -44,8 +44,8 @@ sealed class Screens(
 
     object Settings : Screens(
         titleId = R.string.settings,
-        iconIdInactive = R.drawable.settings_outline,
-        iconIdActive = R.drawable.settings_filled,
+        iconIdInactive = R.drawable.ic_lyra_logo,
+        iconIdActive = R.drawable.ic_lyra_logo,
         route = "settings"
     )
 

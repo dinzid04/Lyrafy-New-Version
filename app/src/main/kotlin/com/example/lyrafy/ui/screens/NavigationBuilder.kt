@@ -242,6 +242,14 @@ fun NavGraphBuilder.navigationBuilder(
         ExploreScreen(navController = navController)
     }
 
+    coverSourceComposable("new_release") {
+        NewReleaseScreen(navController = navController)
+    }
+
+    coverSourceComposable("mood_and_genres") {
+        ExploreScreen(navController = navController)
+    }
+
     coverSourceComposable(Screens.Search.route) {
         val pureBlackEnabled by rememberPreference(PureBlackKey, defaultValue = false)
         val useDarkTheme = ForceDarkTheme
@@ -488,7 +496,7 @@ fun NavGraphBuilder.navigationBuilder(
         )
     }
 
-    composable(
+    coverSourceComposable(
         route = "browse/{browseId}",
         arguments = listOf(
             navArgument("browseId") {
@@ -741,7 +749,7 @@ fun NavGraphBuilder.navigationBuilder(
         )
     }
 
-    composable(
+    coverSourceComposable(
         route = "youtube_browse/{browseId}?params={params}",
         arguments = listOf(
             navArgument("browseId") {

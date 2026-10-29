@@ -2,7 +2,6 @@
 
 package com.example.lyrafy.ui.screens.donate
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -138,9 +137,9 @@ private fun ColumnScope.DonateSheetContent() {
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
-                    model = R.drawable.dev_dinz_profile,
-                    placeholder = painterResource(R.drawable.dev_dinz_profile),
-                    error = coil3.compose.rememberAsyncImagePainter(DevAvatarFallbackUrl),
+                    model = DevAvatarFallbackUrl,
+                    placeholder = painterResource(R.drawable.ic_lyra_logo),
+                    error = painterResource(R.drawable.ic_lyra_logo),
                     contentDescription = "Dinz profile picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -273,8 +272,10 @@ private fun ColumnScope.DonateSheetContent() {
                     .padding(10.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(R.drawable.qris_dinz),
+                AsyncImage(
+                    model = R.drawable.qris_dinz,
+                    placeholder = painterResource(R.drawable.ic_lyra_logo),
+                    error = painterResource(R.drawable.ic_lyra_logo),
                     contentDescription = "QRIS Dinz / Gading Kencana",
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier
@@ -451,8 +452,10 @@ fun QrisLiquidGlassFullscreenOverlay(
                         .padding(12.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.qris_dinz),
+                    AsyncImage(
+                        model = R.drawable.qris_dinz,
+                        placeholder = painterResource(R.drawable.ic_lyra_logo),
+                        error = painterResource(R.drawable.ic_lyra_logo),
                         contentDescription = "QRIS Fullscreen",
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier

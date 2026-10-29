@@ -57,6 +57,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -64,6 +65,7 @@ import kotlin.math.roundToInt
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.example.lyrafy.R
 import com.example.lyrafy.constants.LiquidGlassNavbarKey
 import com.example.lyrafy.ui.screens.Screens
 import com.example.lyrafy.utils.rememberPreference
@@ -269,9 +271,11 @@ fun AppNavigationRail(
                     }
                 },
                 icon = {
+                    val isLyraLogo = screen == Screens.Settings || iconRes == R.drawable.ic_lyra_logo
                     Icon(
-                        painter = coil3.compose.rememberAsyncImagePainter(model = iconRes),
+                        painter = if (isLyraLogo) painterResource(R.drawable.ic_lyra_logo) else coil3.compose.rememberAsyncImagePainter(model = iconRes),
                         contentDescription = stringResource(screen.titleId),
+                        tint = if (isLyraLogo) Color.Unspecified else Color.White,
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -983,8 +987,9 @@ private fun RowScope.NavTab(
     )
 
     // Both icons stay loaded, so lighting a tab never shows an empty frame while its filled icon loads.
-    val unlitIcon = coil3.compose.rememberAsyncImagePainter(model = screen.iconIdInactive)
-    val litIcon = coil3.compose.rememberAsyncImagePainter(model = screen.iconIdActive)
+    val isLyraLogo = screen == Screens.Settings || screen.iconIdInactive == R.drawable.ic_lyra_logo
+    val unlitIcon = if (isLyraLogo) painterResource(R.drawable.ic_lyra_logo) else coil3.compose.rememberAsyncImagePainter(model = screen.iconIdInactive)
+    val litIcon = if (isLyraLogo) painterResource(R.drawable.ic_lyra_logo) else coil3.compose.rememberAsyncImagePainter(model = screen.iconIdActive)
     val iconSize = if (screen == Screens.Home || screen == Screens.Search) 22.dp else 24.dp
 
     val capsuleBorderBrush = remember(primaryColor) {
@@ -1054,11 +1059,12 @@ private fun TabIcons(
     iconSize: androidx.compose.ui.unit.Dp,
     lit: () -> Float,
 ) {
+    val iconTint = if (screen == Screens.Settings) Color.Unspecified else Color.White
     Box(contentAlignment = Alignment.Center) {
         Icon(
             painter = unlitIcon,
             contentDescription = stringResource(screen.titleId),
-            tint = Color.White,
+            tint = iconTint,
             modifier = Modifier
                 .size(iconSize)
                 .graphicsLayer {
@@ -1069,7 +1075,7 @@ private fun TabIcons(
         Icon(
             painter = litIcon,
             contentDescription = null,
-            tint = Color.White,
+            tint = iconTint,
             modifier = Modifier
                 .size(iconSize)
                 .graphicsLayer {

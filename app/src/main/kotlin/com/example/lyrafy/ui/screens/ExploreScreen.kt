@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -39,6 +40,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -62,6 +65,9 @@ import com.music.innertube.models.WatchEndpoint
 import com.example.lyrafy.LocalPlayerAwareWindowInsets
 import com.example.lyrafy.LocalPlayerConnection
 import com.example.lyrafy.R
+import com.example.lyrafy.constants.GridItemSize
+import com.example.lyrafy.constants.GridItemsSizeKey
+import com.example.lyrafy.constants.GridThumbnailHeight
 import com.example.lyrafy.constants.ListItemHeight
 import com.example.lyrafy.models.toMediaMetadata
 import com.example.lyrafy.playback.queues.YouTubeQueue
@@ -75,9 +81,12 @@ import com.example.lyrafy.ui.component.shimmer.TextPlaceholder
 import com.example.lyrafy.ui.menu.YouTubeAlbumMenu
 import com.example.lyrafy.ui.menu.YouTubeSongMenu
 import com.example.lyrafy.ui.utils.SnapLayoutInfoProvider
+import com.example.lyrafy.ui.utils.backToMain
 import com.example.lyrafy.utils.listItemShape
+import com.example.lyrafy.utils.rememberEnumPreference
 import com.example.lyrafy.viewmodels.ChartsViewModel
 import com.example.lyrafy.viewmodels.ExploreViewModel
+import com.example.lyrafy.viewmodels.NewReleaseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -346,15 +355,19 @@ fun ExploreScreen(
                             items = distinctNewReleases,
                             key = { it.id },
                         ) { album ->
+                            val albumRouteId = album.browseId.ifBlank { album.id }
                             YouTubeGridItem(
                                 item = album,
-                                isActive = mediaMetadata?.album?.id == album.id,
+                                isActive = mediaMetadata?.album?.id == albumRouteId || mediaMetadata?.album?.id == album.id,
                                 isPlaying = isPlaying,
                                 coroutineScope = coroutineScope,
+                                sharedElementKey = "album-$albumRouteId",
                                 modifier = Modifier
                                     .combinedClickable(
                                         onClick = {
-                                            navController.navigate("album/${album.id}")
+                                            if (albumRouteId.isNotBlank()) {
+                                                navController.navigate("album/$albumRouteId")
+                                            }
                                         },
                                         onLongClick = {
                                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -434,4 +447,87 @@ fun ExploreScreen(
             )
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun NewReleaseScreen(
+    navController: NavController,
+    viewModel: NewReleaseViewModel = hiltViewModel(),
+) {
+    val menuState = LocalMenuState.current
+    val haptic = LocalHapticFeedback.current
+    val playerConnection = LocalPlayerConnection.current ?: return
+    val isPlaying by playerConnection.isEffectivelyPlaying.collectAsState()
+    val mediaMetadata by playerConnection.mediaMetadata.collectAsState()
+
+    val newReleaseAlbums by viewModel.newReleaseAlbums.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    val gridItemSize by rememberEnumPreference(GridItemsSizeKey, GridItemSize.BIG)
+
+    val distinctAlbums = remember(newReleaseAlbums) {
+        newReleaseAlbums.distinctBy { it.browseId.ifBlank { it.id } }
+    }
+
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = GridThumbnailHeight + if (gridItemSize == GridItemSize.BIG) 24.dp else (-24).dp),
+        contentPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues(),
+    ) {
+        items(
+            items = distinctAlbums,
+            key = { it.browseId.ifBlank { it.id } },
+        ) { album ->
+            val albumRouteId = album.browseId.ifBlank { album.id }
+            YouTubeGridItem(
+                item = album,
+                isActive = mediaMetadata?.album?.id == albumRouteId || mediaMetadata?.album?.id == album.id,
+                isPlaying = isPlaying,
+                fillMaxWidth = true,
+                coroutineScope = coroutineScope,
+                sharedElementKey = "album-$albumRouteId",
+                modifier = Modifier
+                    .combinedClickable(
+                        onClick = {
+                            if (albumRouteId.isNotBlank()) {
+                                navController.navigate("album/$albumRouteId")
+                            }
+                        },
+                        onLongClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            menuState.show {
+                                YouTubeAlbumMenu(
+                                    albumItem = album,
+                                    navController = navController,
+                                    onDismiss = menuState::dismiss,
+                                )
+                            }
+                        },
+                    )
+                    .animateItem(),
+            )
+        }
+
+        if (distinctAlbums.isEmpty()) {
+            items(8) {
+                ShimmerHost {
+                    GridItemPlaceHolder(fillMaxWidth = true)
+                }
+            }
+        }
+    }
+
+    TopAppBar(
+        title = { Text(stringResource(R.string.new_release_albums)) },
+        navigationIcon = {
+            com.example.lyrafy.ui.component.IconButton(
+                onClick = navController::navigateUp,
+                onLongClick = navController::backToMain,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_back_ios),
+                    contentDescription = null,
+                )
+            }
+        },
+    )
 }

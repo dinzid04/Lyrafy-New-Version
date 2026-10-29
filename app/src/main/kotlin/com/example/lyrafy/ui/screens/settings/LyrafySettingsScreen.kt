@@ -55,6 +55,7 @@ import com.example.lyrafy.ui.screens.settings.integrations.discord.DiscordRoute
 import com.example.lyrafy.ui.screens.settings.integrations.scrobbleServiceRoute
 import com.example.lyrafy.constants.ProfilePicUriKey
 import com.example.lyrafy.ui.component.GlassState
+import com.example.lyrafy.ui.component.LocalZoomOutOverlayState
 import com.example.lyrafy.ui.component.SettingsHighlight
 import com.example.lyrafy.ui.component.glassRoot
 import com.example.lyrafy.ui.screens.search.SearchAvatar
@@ -62,6 +63,7 @@ import com.example.lyrafy.ui.screens.search.SearchField
 import com.example.lyrafy.ui.screens.search.SearchGlassTopBar
 import com.example.lyrafy.ui.screens.search.rememberScrollCollapseProgress
 import com.example.lyrafy.ui.screens.search.searchTopBarHeight
+import com.example.lyrafy.ui.screens.update.showAboutSheet
 import com.example.lyrafy.ui.theme.InterFontFamily
 import com.example.lyrafy.utils.rememberPreference
 
@@ -146,6 +148,9 @@ private val SettingsIndex = listOf(
     SettingsEntry("Repeat initial setup", "Experimental", "experimental_settings", "onboarding wizard setup"),
     SettingsEntry("Show where songs play from", "Experimental", "experimental_settings", "source banner toast apple music monochrome youtube"),
     SettingsEntry("Force playback", "Experimental", "experimental_settings", "fallback skip error stream failed youtube"),
+
+    // Developer & About
+    SettingsEntry("Version & about app", "About", "about_sheet", "version about lyra developer dinz support qris donate"),
 )
 
 private data class RecommendedSetting(
@@ -189,6 +194,7 @@ private val IconBgColor = Color(0xFF333338)
 @Composable
 fun LyrafySettingsScreen(navController: NavController) {
     val focusManager = LocalFocusManager.current
+    val zoomOutState = LocalZoomOutOverlayState.current
     val scrollState = rememberScrollState()
     val glassState = remember { GlassState() }
 
@@ -282,8 +288,12 @@ fun LyrafySettingsScreen(navController: NavController) {
                                     .clip(RoundedCornerShape(20.dp))
                                     .background(BubbleColor)
                                     .clickable {
-                                        SettingsHighlight.pending = entry.highlightKey
-                                        navController.navigate(entry.route)
+                                        if (entry.route == "about_sheet") {
+                                            zoomOutState.showAboutSheet()
+                                        } else {
+                                            SettingsHighlight.pending = entry.highlightKey
+                                            navController.navigate(entry.route)
+                                        }
                                     }
                                     .padding(horizontal = 16.dp, vertical = 14.dp)
                             ) {
@@ -459,6 +469,12 @@ fun LyrafySettingsScreen(navController: NavController) {
                             title = "Integrations",
                             iconRes = R.drawable.integration,
                             onClick = { navController.navigate(IntegrationsRoute) }
+                        )
+
+                        CategoryBubble(
+                            title = "Version & about app",
+                            iconRes = R.drawable.info,
+                            onClick = { zoomOutState.showAboutSheet() }
                         )
                     }
                 }

@@ -172,3 +172,11 @@
 -keepclasseswithmembers class com.music.shazamkit.models.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
+
+## Keep App & Provider Models Safe From R8 Stripping
+-keep class com.example.lyrafy.** { *; }
+-keep class com.example.musicfy.** { *; }
+-keep class com.music.** { *; }
+-dontwarn com.example.lyrafy.**
+-dontwarn com.example.musicfy.**
+-dontwarn com.music.**
